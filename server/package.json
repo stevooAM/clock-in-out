@@ -5,7 +5,9 @@
   "author": "Carlos Caballero",
   "license": "MIT",
   "scripts": {
+    "prebuild": "prisma generate",
     "build": "nest build",
+    "postinstall": "prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -23,7 +25,8 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
     "db:push": "prisma db push",
-    "db:seed": "npm run prisma:seed"
+    "db:seed": "npm run prisma:seed",
+    "vercel-build": "prisma generate && prisma migrate deploy && nest build"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.3",
