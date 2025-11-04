@@ -1,11 +1,101 @@
-<ng-container *ngIf="(users$ | async) as users; else noUsers">
-  <select [(ngModel)]="userID">
-    <option *ngFor="let user of users" [value]="user.uid">{{
-      user.uid
-    }}</option>
-  </select>
-  Key: <input [(ngModel)]="key" type="text" />
-  <button (click)="save()">Save</button>
-</ng-container>
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-2xl animate-fade-in">
+    <mat-card class="!rounded-2xl !shadow-2xl">
+      <mat-card-header class="!bg-gradient-to-r !from-primary-500 !to-primary-600 !p-8 !rounded-t-2xl">
+        <div class="flex items-center gap-4 w-full">
+          <div class="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+            <mat-icon class="!w-10 !h-10 !text-[2.5rem] text-white">person_add</mat-icon>
+          </div>
+          <div class="flex-1">
+            <mat-card-title class="!text-3xl !font-bold !text-white !mb-1">
+              User Registration
+            </mat-card-title>
+            <mat-card-subtitle class="!text-white/90 !text-base">
+              Register NFC cards for employees
+            </mat-card-subtitle>
+          </div>
+        </div>
+      </mat-card-header>
 
-<ng-template #noUsers> Finished! </ng-template>
+      <mat-card-content class="!p-8">
+        <ng-container *ngIf="(users$ | async) as users; else noUsers">
+          <form class="flex flex-col gap-6">
+            <!-- User Selection -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>
+                <div class="flex items-center gap-2">
+                  <mat-icon class="!w-5 !h-5 !text-xl">person</mat-icon>
+                  <span>Select User</span>
+                </div>
+              </mat-label>
+              <mat-select [(ngModel)]="userID" name="userID" required>
+                <mat-option *ngFor="let user of users" [value]="user.uid">
+                  {{ user.uid }}
+                </mat-option>
+              </mat-select>
+              <mat-hint>Choose the employee to register</mat-hint>
+            </mat-form-field>
+
+            <!-- NFC Key Input -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>
+                <div class="flex items-center gap-2">
+                  <mat-icon class="!w-5 !h-5 !text-xl">nfc</mat-icon>
+                  <span>NFC Card Key</span>
+                </div>
+              </mat-label>
+              <input 
+                matInput 
+                [(ngModel)]="key" 
+                name="key" 
+                type="text" 
+                placeholder="Enter NFC card identifier"
+                required
+              />
+              <mat-hint>Scan or enter the NFC card UID</mat-hint>
+            </mat-form-field>
+
+            <!-- Submit Button -->
+            <button 
+              mat-raised-button 
+              color="primary"
+              (click)="save()"
+              [disabled]="!userID || !key"
+              class="!py-4 !text-lg !font-semibold !rounded-xl !shadow-lg hover:!shadow-xl !transition-all !duration-300"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <mat-icon>save</mat-icon>
+                <span>Register Card</span>
+              </div>
+            </button>
+
+            <!-- Info Box -->
+            <div class="bg-primary-50 border-l-4 border-primary-500 p-4 rounded-r-lg">
+              <div class="flex items-start gap-3">
+                <mat-icon class="text-primary-600 !w-6 !h-6 !text-2xl">info</mat-icon>
+                <div>
+                  <h3 class="font-semibold text-primary-900 mb-1">How to use:</h3>
+                  <ul class="text-primary-800 text-sm space-y-1 list-disc list-inside">
+                    <li>Select an employee from the dropdown</li>
+                    <li>Scan their NFC card or enter the card UID manually</li>
+                    <li>Click "Register Card" to save the association</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </form>
+        </ng-container>
+
+        <ng-template #noUsers>
+          <div class="text-center py-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-success-100 rounded-full mb-4">
+              <mat-icon class="!w-12 !h-12 !text-[3rem] text-success-600">check_circle</mat-icon>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">All Set!</h2>
+            <p class="text-gray-600 text-lg">All users have been registered successfully.</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

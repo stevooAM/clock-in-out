@@ -1,10 +1,91 @@
+# ⏰ Clock-in/Out System - Modernized
 
-# Clock-in/out
-A clock-in/out system using nestJS, PostgreSQL, TypeORM, Angular, Arduino, RxJS
+> A modern, real-time employee attendance tracking system with NFC card integration
 
-In this post I'm going to summerize all the links (you will find them down below) about clock-in/out system. I’ve used **NestJS** (framework of NodeJS) and **Angular**.
+[![Angular](https://img.shields.io/badge/Angular-17-red.svg)](https://angular.io/)
+[![NestJS](https://img.shields.io/badge/NestJS-10-e0234e.svg)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue.svg)](https://www.typescriptlang.org/)
+[![Material Design](https://img.shields.io/badge/Material%20Design-3-757575.svg)](https://material.angular.io/)
 
-The idea of this project is to develop a clock-in/out system using Arduino as NFC transmitter to a **NodeJS** API.For the frontend project, I’ve chosen Angular with RxJS. This allows me to have almost a realtime system. Since RxJS polling is enough for my needs, socketIO is not required.
+## 🎯 What is this?
+
+A **clock-in/out system** using **NestJS**, **PostgreSQL**, **TypeORM**, **Angular**, **Arduino**, and **RxJS**. This project has been **completely modernized** with the latest versions of all frameworks and a beautiful new UI!
+
+### Key Features
+
+- ⚡ **Real-time tracking** - Live employee presence monitoring
+- 💳 **NFC integration** - Arduino-based card scanning
+- 🎨 **Modern UI** - Beautiful Material Design 3 interface
+- 📱 **Responsive** - Works on all devices
+- 🚀 **Fast** - Real-time updates with RxJS polling
+
+## 🆕 Recently Modernized!
+
+This project has been upgraded from Angular 7 & NestJS 5 to the latest versions with a complete UI overhaul:
+
+- ✨ **Angular 17** with standalone components
+- ✨ **NestJS 10** with latest best practices
+- ✨ **Material Design 3** with Tailwind CSS
+- ✨ **TypeScript 5.4** across the stack
+- ✨ Beautiful gradient UI with animations
+
+👉 **See [MODERNIZATION.md](MODERNIZATION.md) for full details!**
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20+ LTS
+- PostgreSQL 12+
+- npm or yarn
+
+### Automated Setup
+
+```bash
+# Make the setup script executable
+chmod +x setup.sh
+
+# Run the setup
+./setup.sh
+```
+
+### Manual Setup
+
+#### Backend
+
+```bash
+cd server
+npm install
+npm run start:dev
+```
+
+#### Frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Visit `http://localhost:4200` 🎉
+
+## 📸 Screenshots
+
+### Dashboard View
+- Real-time employee tracking
+- Present/absent statistics
+- Color-coded status indicators
+- Split-column table layout
+
+### User Registration
+- Modern form interface
+- NFC card registration
+- Dropdown user selection
+- Validation and notifications
+
+## 🏗️ Architecture
+
+A **clock-in/out system** using **NestJS**, **PostgreSQL**, **TypeORM**, **Angular**, **Arduino**, and **RxJS**. This project demonstrates modern web development practices with real-time updates.
 
 You can find more information in the following links:
 

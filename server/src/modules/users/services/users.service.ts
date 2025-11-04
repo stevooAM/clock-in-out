@@ -1,8 +1,7 @@
-import { User as UserEntity, User } from '../entities/user.entity';
-import { Injectable, Inject } from '@nestjs/common';
-import { USER_REPOSITORY_TOKEN } from '../../../common/config/database.tokens.constants';
-import { Repository } from 'typeorm';
-import * as moment from 'moment';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { User } from '@prisma/client';
+import { subHours, getDay, parse, isWithinInterval, getUnixTime } from 'date-fns';
 import {
   SCHEDULE_EXCLUDE,
   SCHEDULE_HOURS,
@@ -15,76 +14,86 @@ import {
 
 @Injectable()
 export class UserService {
-  constructor(
-    @Inject(USER_REPOSITORY_TOKEN)
-    private readonly usersRepository: Repository<UserEntity>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  public getUsersWithoutKey(): Promise<UserEntity[]> {
-    return this.usersRepository
-      .createQueryBuilder('user')
-      .select('user.uid')
-      .where('user.key IS NULL')
-      .getMany();
-  }
-  public addUser(userDto: { uid: string; key: string }): Promise<User> {
-    return this.usersRepository.save(Object.assign(new User(), userDto));
+  public async getUsersWithoutKey(): Promise<Pick<User, 'uid'>[]> {
+    return this.prisma.user.findMany({
+      where: {
+        key: null,
+      },
+      select: {
+        uid: true,
+      },
+    });
   }
 
-  public getUsersMustBeWorkingNow() {
-    const date = moment().subtract(4, 'h');
-    const dayOfWeek = date.day() - 1;
+  public async addUser(userDto: { uid: string; key: string }): Promise<User> {
+    return this.prisma.user.update({
+      where: {
+        uid: userDto.uid,
+      },
+      data: {
+        key: userDto.key,
+      },
+    });
+  }
+
+  public async getUsersMustBeWorkingNow() {
+    const date = subHours(new Date(), 4);
+    const dayOfWeek = getDay(date) - 1;
     const hourNow = this.convertBetweenRealHourAndScheduleHour(date);
     const isMorning = this.isMorning(date);
 
-    const users = this.usersRepository
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.schedule', 'schedule')
-      .leftJoinAndSelect(
-        'user.auths',
-        'auths',
-        '(auths.timestamp > :lowerHour AND auths.timestamp < :upperHour)',
-        {
-          lowerHour: isMorning
-            ? moment(FIRST_HOUR_MORNING, HOUR_FORMAT).unix()
-            : moment(FIRST_HOUR_NIGHT, HOUR_FORMAT).unix(),
-          upperHour: isMorning
-            ? moment(LAST_HOUR_MORNING, HOUR_FORMAT).unix()
-            : moment(LAST_HOUR_NIGHT, HOUR_FORMAT).unix(),
+    const lowerHour = isMorning
+      ? getUnixTime(parse(FIRST_HOUR_MORNING, HOUR_FORMAT, new Date()))
+      : getUnixTime(parse(FIRST_HOUR_NIGHT, HOUR_FORMAT, new Date()));
+
+    const upperHour = isMorning
+      ? getUnixTime(parse(LAST_HOUR_MORNING, HOUR_FORMAT, new Date()))
+      : getUnixTime(parse(LAST_HOUR_NIGHT, HOUR_FORMAT, new Date()));
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        schedule: {
+          some: {
+            day: String(dayOfWeek),
+            hour: String(hourNow),
+            NOT: {
+              room: {
+                in: SCHEDULE_EXCLUDE,
+              },
+            },
+          },
         },
-      )
-      .where('schedule.day = :dayOfWeek', {
-        dayOfWeek,
-      })
-      .andWhere('schedule.hour = :hourNow', {
-        hourNow,
-      })
-      .andWhere('schedule.room NOT IN (:...exclude)', {
-        exclude: SCHEDULE_EXCLUDE,
-      })
-      .getMany();
+      },
+      include: {
+        schedule: true,
+        auths: {
+          where: {
+            timestamp: {
+              gte: lowerHour,
+              lte: upperHour,
+            },
+          },
+        },
+      },
+    });
+
     return users;
   }
 
-  private convertBetweenRealHourAndScheduleHour(
-    realHour: moment.Moment,
-  ): number {
-    return SCHEDULE_HOURS.findIndex(range =>
-      realHour.isBetween(
-        moment(range[0], HOUR_FORMAT),
-        moment(range[1], HOUR_FORMAT),
-        'milliseconds',
-        '[]',
-      ),
-    );
+  private convertBetweenRealHourAndScheduleHour(realHour: Date): number {
+    return SCHEDULE_HOURS.findIndex(range => {
+      const start = parse(range[0], HOUR_FORMAT, new Date());
+      const end = parse(range[1], HOUR_FORMAT, new Date());
+      return isWithinInterval(realHour, { start, end });
+    });
   }
 
-  private isMorning(hour: moment.Moment): boolean {
-    return hour.isBetween(
-      moment(FIRST_HOUR_MORNING, HOUR_FORMAT),
-      moment(LAST_HOUR_MORNING, HOUR_FORMAT),
-      'milliseconds',
-      '[]',
-    );
+  private isMorning(hour: Date): boolean {
+    const start = parse(FIRST_HOUR_MORNING, HOUR_FORMAT, new Date());
+    const end = parse(LAST_HOUR_MORNING, HOUR_FORMAT, new Date());
+    return isWithinInterval(hour, { start, end });
   }
 }
+

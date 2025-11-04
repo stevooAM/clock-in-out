@@ -1,29 +1,42 @@
 {
   "name": "clock-in-out",
-  "version": "0.1.0",
-  "description": "A clock-in/out system using nestJS, PostgreSQL, TypeORM, Angular, Arduino, RxJS",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Modern clock-in/out system using NestJS 10, PostgreSQL, TypeORM, Angular 17, Arduino, RxJS",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm install && cd frontend && npm install && cd ../server && npm install && cd ..",
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:frontend": "cd frontend && npm start",
+    "dev:backend": "cd server && npm run start:dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd server && npm run build",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd server && npm run lint",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd server && npm test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Caballerog/clock-in-out.git"
   },
   "keywords": [
-    "clock-in/out",
-    "nestJS",
-    "PostgreSQL",
-    "TypeORM",
-    "Angular",
-    "Arduino",
-    "RxJS"
+    "clock-in-out",
+    "nestjs",
+    "nestjs-10",
+    "postgresql",
+    "typeorm",
+    "angular",
+    "angular-17",
+    "arduino",
+    "rxjs",
+    "nfc",
+    "attendance",
+    "material-design",
+    "tailwindcss",
+    "typescript"
   ],
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "author": "Carlos Caballero",
   "license": "MIT",
   "bugs": {
@@ -31,8 +44,12 @@
   },
   "homepage": "https://github.com/Caballerog/clock-in-out#readme",
   "devDependencies": {
-    "@commitlint/config-angular": "^7.1.2",
-    "commitlint": "^7.2.1",
-    "husky": "^1.2.0"
+    "@commitlint/config-angular": "^19.0.3",
+    "@commitlint/cli": "^19.0.3",
+    "husky": "^9.0.11"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   }
 }

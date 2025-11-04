@@ -1,10 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import {
-  AUTH_REPOSITORY_TOKEN,
-  USER_REPOSITORY_TOKEN,
-} from '../../common/config/database.tokens.constants';
-import { AuthEntity } from './entities/auth.entity';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { AuthResponseDto } from './dto/auth.response.dto';
 import {
@@ -12,16 +7,12 @@ import {
   INPUT,
   OUTPUT,
 } from './constants/auth.constants';
-import * as moment from 'moment';
-import { User } from '../users/entities/user.entity';
+import { getUnixTime } from 'date-fns';
+import { User } from '@prisma/client';
+
 @Injectable()
 export class AuthService {
-  constructor(
-    @Inject(AUTH_REPOSITORY_TOKEN)
-    private readonly authRepository: Repository<AuthEntity>,
-    @Inject(USER_REPOSITORY_TOKEN)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async authIn(auth: AuthDto): Promise<AuthResponseDto> {
     try {
@@ -31,6 +22,7 @@ export class AuthService {
       return { status: STATUS_CODE_RESPONSE.KO, msg: 'Error en la entrada' };
     }
   }
+
   async authOut(auth: AuthDto): Promise<AuthResponseDto> {
     try {
       const user = await this.saveTicketing({ ...auth, reader: OUTPUT });
@@ -39,30 +31,37 @@ export class AuthService {
       return { status: STATUS_CODE_RESPONSE.KO, msg: 'Error en la salida' };
     }
   }
-  private async saveTicketing(auth: AuthDto): Promise<User> {
-    const user = await this.userRepository.findOne({
+
+  private async saveTicketing(auth: AuthDto & { reader: string }): Promise<User> {
+    const user = await this.prisma.user.findFirst({
       where: {
         key: auth.key,
       },
     });
+
     if (!user) {
-      throw new Error();
+      throw new Error('User not found');
     }
-    await this.authRepository.save({
-      ...auth,
-      user,
-      timestamp: moment().unix(),
+
+    await this.prisma.auth.create({
+      data: {
+        reader: auth.reader,
+        timestamp: getUnixTime(new Date()),
+        userId: user.uid,
+      },
     });
+
     return user;
   }
 
-  private welcomeTeacher(nameTeacher) {
+  private welcomeTeacher(nameTeacher: string): AuthResponseDto {
     return {
       status: STATUS_CODE_RESPONSE.OK,
       msg: `Entrada - ${nameTeacher}`,
     };
   }
-  private byeTeacher(nameTeacher) {
+
+  private byeTeacher(nameTeacher: string): AuthResponseDto {
     return {
       status: STATUS_CODE_RESPONSE.OK,
       msg: `Salida - ${nameTeacher}`,

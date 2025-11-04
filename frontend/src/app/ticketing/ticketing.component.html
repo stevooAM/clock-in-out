@@ -1,75 +1,231 @@
-<div>
-  <span class="center">Absent</span>
-  <span class="right"> {{ timestamp$ | async }}</span>
-</div>
-<div style="display:flex">
-  <mat-table [dataSource]="middle((usersAbsent$ | async), 1)">
+<div class="min-h-screen p-4 md:p-8">
+  <!-- Header -->
+  <header class="max-w-7xl mx-auto mb-8 animate-fade-in">
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="bg-gradient-to-br from-primary-500 to-primary-700 p-4 rounded-xl shadow-lg">
+            <mat-icon class="!w-10 !h-10 !text-[2.5rem] text-white">schedule</mat-icon>
+          </div>
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Clock In/Out System</h1>
+            <p class="text-gray-600 mt-1">Real-time attendance tracking</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-gray-700 bg-gray-100 px-5 py-3 rounded-xl shadow-inner">
+          <mat-icon class="!w-5 !h-5 !text-xl">access_time</mat-icon>
+          <span class="font-semibold text-lg">{{ timestamp$ | async }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
+  <div class="max-w-7xl mx-auto">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-slide-in">
+      <!-- Present Card -->
+      <mat-card class="!rounded-2xl !shadow-2xl hover:!shadow-3xl transition-all duration-300 transform hover:-translate-y-1 !bg-gradient-to-br !from-success-50 !to-white border-2 !border-success-200">
+        <mat-card-content class="!p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="bg-success-500 p-3 rounded-xl shadow-lg">
+                  <mat-icon class="!w-8 !h-8 !text-[2rem] text-white">check_circle</mat-icon>
+                </div>
+                <h2 class="text-2xl font-bold text-success-700">Present</h2>
+              </div>
+              <p class="text-success-600 text-sm font-medium">Employees currently checked in</p>
+            </div>
+            <div class="text-right">
+              <div class="text-5xl font-bold text-success-700">{{ presentCount$ | async }}</div>
+              <span class="text-success-600 text-sm font-semibold uppercase tracking-wide">Active</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Employee </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
+      <!-- Absent Card -->
+      <mat-card class="!rounded-2xl !shadow-2xl hover:!shadow-3xl transition-all duration-300 transform hover:-translate-y-1 !bg-gradient-to-br !from-error-50 !to-white border-2 !border-error-200">
+        <mat-card-content class="!p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="bg-error-500 p-3 rounded-xl shadow-lg">
+                  <mat-icon class="!w-8 !h-8 !text-[2rem] text-white">cancel</mat-icon>
+                </div>
+                <h2 class="text-2xl font-bold text-error-700">Absent</h2>
+              </div>
+              <p class="text-error-600 text-sm font-medium">Employees not checked in</p>
+            </div>
+            <div class="text-right">
+              <div class="text-5xl font-bold text-error-700">{{ absentCount$ | async }}</div>
+              <span class="text-error-600 text-sm font-semibold uppercase tracking-wide">Away</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
 
+    <!-- Present Employees Section -->
+    <mat-card class="!rounded-2xl !shadow-2xl mb-8 overflow-hidden animate-fade-in">
+      <mat-card-header class="!bg-gradient-to-r !from-success-500 !to-success-600 !p-6">
+        <div class="flex items-center gap-3 w-full">
+          <mat-icon class="!w-8 !h-8 !text-[2rem] text-white">groups</mat-icon>
+          <mat-card-title class="!text-2xl !font-bold !text-white !mb-0">Present Employees</mat-card-title>
+        </div>
+      </mat-card-header>
+      <mat-card-content class="!p-0">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <!-- Left Column -->
+          <div class="border-r border-gray-200">
+            <mat-table [dataSource]="splitUsers((usersPresent$ | async), 1)" class="w-full">
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">person</mat-icon>
+                    <span>Employee</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6 !font-medium !text-gray-900">
+                  {{element.name}}
+                </mat-cell>
+              </ng-container>
 
-    <ng-container matColumnDef="room">
-      <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.schedule[0].room}} </mat-cell>
-    </ng-container>
+              <ng-container matColumnDef="room">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">meeting_room</mat-icon>
+                    <span>Room</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6">
+                  <mat-chip class="!bg-success-100 !text-success-800 !font-semibold">
+                    {{element.schedule[0].room}}
+                  </mat-chip>
+                </mat-cell>
+              </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+              <mat-header-row *matHeaderRowDef="displayedColumns" class="!bg-gray-50"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:!bg-success-50 transition-colors duration-200"></mat-row>
+            </mat-table>
+          </div>
 
-  <mat-table [dataSource]="middle((usersAbsent$ | async), 2)">
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
+          <!-- Right Column -->
+          <div>
+            <mat-table [dataSource]="splitUsers((usersPresent$ | async), 2)" class="w-full">
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">person</mat-icon>
+                    <span>Employee</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6 !font-medium !text-gray-900">
+                  {{element.name}}
+                </mat-cell>
+              </ng-container>
 
-    <ng-container matColumnDef="room">
-      <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.schedule[0].room}} </mat-cell>
-    </ng-container>
+              <ng-container matColumnDef="room">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">meeting_room</mat-icon>
+                    <span>Room</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6">
+                  <mat-chip class="!bg-success-100 !text-success-800 !font-semibold">
+                    {{element.schedule[0].room}}
+                  </mat-chip>
+                </mat-cell>
+              </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-</div>
+              <mat-header-row *matHeaderRowDef="displayedColumns" class="!bg-gray-50"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:!bg-success-50 transition-colors duration-200"></mat-row>
+            </mat-table>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
+    <!-- Absent Employees Section -->
+    <mat-card class="!rounded-2xl !shadow-2xl overflow-hidden animate-fade-in">
+      <mat-card-header class="!bg-gradient-to-r !from-error-500 !to-error-600 !p-6">
+        <div class="flex items-center gap-3 w-full">
+          <mat-icon class="!w-8 !h-8 !text-[2rem] text-white">people_outline</mat-icon>
+          <mat-card-title class="!text-2xl !font-bold !text-white !mb-0">Absent Employees</mat-card-title>
+        </div>
+      </mat-card-header>
+      <mat-card-content class="!p-0">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <!-- Left Column -->
+          <div class="border-r border-gray-200">
+            <mat-table [dataSource]="splitUsers((usersAbsent$ | async), 1)" class="w-full">
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">person</mat-icon>
+                    <span>Employee</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6 !font-medium !text-gray-900">
+                  {{element.name}}
+                </mat-cell>
+              </ng-container>
 
-<span class="center">PRESENT</span>
-<div style="display:flex">
-  <mat-table [dataSource]="middle((usersPresent$ | async), 1)">
+              <ng-container matColumnDef="room">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">meeting_room</mat-icon>
+                    <span>Room</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6">
+                  <mat-chip class="!bg-error-100 !text-error-800 !font-semibold">
+                    {{element.schedule[0].room}}
+                  </mat-chip>
+                </mat-cell>
+              </ng-container>
 
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Employee </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns" class="!bg-gray-50"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:!bg-error-50 transition-colors duration-200"></mat-row>
+            </mat-table>
+          </div>
 
+          <!-- Right Column -->
+          <div>
+            <mat-table [dataSource]="splitUsers((usersAbsent$ | async), 2)" class="w-full">
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">person</mat-icon>
+                    <span>Employee</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6 !font-medium !text-gray-900">
+                  {{element.name}}
+                </mat-cell>
+              </ng-container>
 
-    <ng-container matColumnDef="room">
-      <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.schedule[0].room}} </mat-cell>
-    </ng-container>
+              <ng-container matColumnDef="room">
+                <mat-header-cell *matHeaderCellDef class="!py-4 !px-6 !font-bold !text-gray-700">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="!w-5 !h-5 !text-xl">meeting_room</mat-icon>
+                    <span>Room</span>
+                  </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="!py-4 !px-6">
+                  <mat-chip class="!bg-error-100 !text-error-800 !font-semibold">
+                    {{element.schedule[0].room}}
+                  </mat-chip>
+                </mat-cell>
+              </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-
-  <mat-table [dataSource]="middle((usersPresent$ | async), 2)">
-
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> EMPLOYEE </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="room">
-      <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.schedule[0].room}} </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+              <mat-header-row *matHeaderRowDef="displayedColumns" class="!bg-gray-50"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:!bg-error-50 transition-colors duration-200"></mat-row>
+            </mat-table>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

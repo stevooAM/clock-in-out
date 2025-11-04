@@ -2,24 +2,37 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
-    "noImplicitAny": false,
     "removeComments": true,
-    "noLib": false,
-    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
+    "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@common/": ["common/"],
-      "@modules/": ["modules/"],
-      "@env/": ["env/"]
-    },
-    "lib": ["es2017", "dom"]
+      "@common/*": ["src/common/*"],
+      "@modules/*": ["src/modules/*"],
+      "@env/*": ["env/*"]
+    }
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "env/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*spec.ts",
+    "src/modules/database/**/*",
+    "src/modules/**/entities/*.entity.ts",
+    "src/modules/**/entities/*.provider.ts"
+  ]
 }

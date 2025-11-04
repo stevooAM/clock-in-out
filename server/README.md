@@ -1,75 +1,269 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# 🚀 Clock-In/Out Backend - NestJS 10 + Prisma
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Modern backend for the Clock-In/Out attendance tracking system.
 
-## Description
+## ✨ Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 🎯 **NestJS 10** - Latest enterprise Node.js framework
+- 🗄️ **Prisma ORM** - Type-safe database access
+- 🐘 **PostgreSQL** - Reliable relational database
+- 🔐 **Type Safety** - Full TypeScript coverage
+- 📊 **Prisma Studio** - Visual database management
+- ⚡ **Hot Reload** - Fast development workflow
 
-## Installation
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 20+
+- PostgreSQL 12+
+- npm or yarn
+
+### Setup in 3 Steps
 
 ```bash
-$ npm install
+# 1. Install dependencies
+npm install
+
+# 2. Setup database (creates tables & adds sample data)
+createdb clock_in_out
+npm run prisma:migrate
+npm run db:seed
+
+# 3. Start development server
+npm run start:dev
 ```
 
-## Running the app
+**API runs at:** http://localhost:3000
+
+📖 **Need detailed setup?** See [PRISMA_QUICKSTART.md](./PRISMA_QUICKSTART.md)
+
+## 📦 What's Inside
+
+### Technology Stack
+- **Framework:** NestJS 10
+- **ORM:** Prisma 5.10
+- **Database:** PostgreSQL
+- **Language:** TypeScript 5.4
+- **Runtime:** Node.js 20
+
+### Project Structure
+```
+server/
+├── prisma/
+│   ├── schema.prisma       # Database schema
+│   ├── seed.ts            # Sample data
+│   └── migrations/        # Migration history
+├── src/
+│   ├── prisma/            # Prisma service
+│   ├── modules/
+│   │   ├── users/         # User management
+│   │   └── auth/          # Clock in/out
+│   ├── app.module.ts      # Root module
+│   └── main.ts           # Entry point
+└── test/                  # Tests
+```
+
+## 🎯 API Endpoints
+
+### Get All Users
+```bash
+GET /users
+# Returns all users with schedules and clock-in/out status
+```
+
+### Get Users Without NFC Keys
+```bash
+GET /user
+# Returns users who need NFC card registration
+```
+
+### Register NFC Card
+```bash
+POST /user
+Content-Type: application/json
+
+{
+  "uid": "user001",
+  "key": "NFC-KEY-001"
+}
+```
+
+### Clock In
+```bash
+POST /in
+Content-Type: application/json
+
+{
+  "key": "NFC-KEY-001"
+}
+```
+
+### Clock Out
+```bash
+POST /out
+Content-Type: application/json
+
+{
+  "key": "NFC-KEY-001"
+}
+```
+
+## 🗄️ Database (Prisma)
+
+### Common Commands
 
 ```bash
-# development
-$ npm run start
+# Generate Prisma Client
+npm run prisma:generate
 
-# watch mode
-$ npm run start:dev
+# Create migration
+npm run prisma:migrate
 
-# production mode
+# Open visual database editor
+npm run prisma:studio
+
+# Seed database
+npm run db:seed
+
+# Reset database
+npm run prisma:migrate -- reset
+```
+
+### Database Schema
+
+- **User** - Employees with NFC keys
+- **UserSchedule** - Work schedules
+- **Auth** - Clock-in/out records
+
+📖 **Full database guide:** [PRISMA_SETUP.md](./PRISMA_SETUP.md)
+
+## 🛠️ Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (with hot reload)
+npm run start:dev
+
+# Start with debugging
+npm run start:debug
+
+# Build for production
+npm run build
+
+# Run production build
 npm run start:prod
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:cov
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
 ```
 
-## Test
+## 🐛 Troubleshooting
+
+### Can't connect to database?
+```bash
+# Check PostgreSQL is running
+brew services list  # macOS
+sudo systemctl status postgresql  # Linux
+
+# Start PostgreSQL
+brew services start postgresql@14  # macOS
+sudo systemctl start postgresql  # Linux
+```
+
+### Database doesn't exist?
+```bash
+createdb clock_in_out
+```
+
+### Prisma Client errors?
+```bash
+npm run prisma:generate
+```
+
+### Port 3000 in use?
+```bash
+lsof -ti:3000 | xargs kill -9
+```
+
+## 📚 Documentation
+
+- **[PRISMA_QUICKSTART.md](./PRISMA_QUICKSTART.md)** - 5-minute setup guide
+- **[PRISMA_SETUP.md](./PRISMA_SETUP.md)** - Comprehensive database guide
+- **[PRISMA_MIGRATION.md](./PRISMA_MIGRATION.md)** - TypeORM to Prisma migration details
+
+## 🔄 Recent Updates
+
+### v2.0.0 - Prisma Migration
+- ✅ Migrated from TypeORM to Prisma ORM
+- ✅ Updated to NestJS 10
+- ✅ Replaced moment.js with date-fns
+- ✅ Added Prisma Studio support
+- ✅ Improved type safety
+- ✅ Better developer experience
+
+## 🧪 Testing
 
 ```bash
-# unit tests
-$ npm run test
+# Unit tests
+npm test
 
-# e2e tests
-$ npm run test:e2e
+# E2E tests
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# Test coverage
+npm run test:cov
+
+# Watch mode
+npm run test:watch
 ```
 
-## Support
+## 🚀 Deployment
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Using Docker
+```bash
+docker build -t clock-backend .
+docker run -p 3000:3000 clock-backend
+```
 
-## Stay in touch
+### Environment Variables
+```env
+DATABASE_URL="postgresql://user:pass@host:port/db"
+PORT=3000
+NODE_ENV=production
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 📄 License
 
-## License
+MIT
 
-  Nest is [MIT licensed](LICENSE).
+## 👥 Authors
+
+- Original: Carlos Caballero
+- Modernization: 2025
+
+---
+
+## 💡 Quick Tips
+
+1. **Always run `prisma:generate` after schema changes**
+2. **Use `prisma:studio` for quick data viewing/editing**
+3. **Check `.env` file if database connection fails**
+4. **Use `db:seed` to reset to known state**
+5. **Run `npm run lint` before committing**
+
+## 🎉 Happy Coding!
+
+**Questions?** Check the documentation files or open an issue.
+
+**Contributing?** PRs welcome! Please run `npm run lint` first.
