@@ -15,10 +15,13 @@ model User {
   uid      String   @id @db.VarChar(255)
   name     String   @db.VarChar(255)
   key      String?  @db.VarChar(255) // NFC card key
+  email    String?  @db.VarChar(255) // For virtual cards (OTP via email)
+  phone    String?  @db.VarChar(50)  // For virtual cards (OTP via SMS)
   
   // Relations
   auths    Auth[]
   schedule UserSchedule[]
+  otpCodes OtpCode[]
 
   @@map("user") // Maps to 'user' table in database
 }
@@ -43,6 +46,7 @@ model Auth {
   id        Int      @id @default(autoincrement()) @map("id_key")
   reader    String   @db.VarChar(50) // 'input' or 'output'
   timestamp Int      // Unix timestamp
+  method    String   @default("nfc") @db.VarChar(20) // 'nfc', 'otp', 'manual'
   
   // Relations
   userId    String   @map("userUid") @db.VarChar(255)
@@ -51,5 +55,24 @@ model Auth {
   @@map("auth_entity")
   @@index([userId])
   @@index([timestamp])
+}
+
+// OTP Code model - For virtual card authentication
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  code      String   @db.VarChar(10)
+  type      String   @db.VarChar(10) // 'in' or 'out'
+  expiresAt DateTime @db.Timestamp
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamp
+  
+  // Relations
+  userId    String   @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+
+  @@map("otp_code")
+  @@index([userId])
+  @@index([code])
+  @@index([expiresAt])
 }
 

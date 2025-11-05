@@ -1,0 +1,186 @@
+<div class="clock-in-out-container">
+  <mat-card class="main-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>access_time</mat-icon>
+        Clock In/Out
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group>
+        <!-- Manual ID Entry Tab -->
+        <mat-tab label="Manual ID Entry">
+          <div class="tab-content">
+            <form (ngSubmit)="onManualSubmit()" class="auth-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Action</mat-label>
+                <mat-select [(ngModel)]="manualAction" name="action">
+                  <mat-option value="in">Clock In</mat-option>
+                  <mat-option value="out">Clock Out</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>User ID</mat-label>
+                <input
+                  matInput
+                  [(ngModel)]="manualUserId"
+                  name="userId"
+                  placeholder="Enter your user ID (e.g., user001)"
+                  required
+                />
+                <mat-icon matPrefix>badge</mat-icon>
+              </mat-form-field>
+
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="manualLoading || !manualUserId.trim()"
+                class="submit-button"
+              >
+                <mat-spinner
+                  *ngIf="manualLoading"
+                  diameter="20"
+                  class="spinner"
+                ></mat-spinner>
+                <span *ngIf="!manualLoading">
+                  {{ manualAction === 'in' ? 'Clock In' : 'Clock Out' }}
+                </span>
+              </button>
+            </form>
+          </div>
+        </mat-tab>
+
+        <!-- OTP Authentication Tab -->
+        <mat-tab label="Virtual Card (OTP)">
+          <div class="tab-content">
+            <form class="auth-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Action</mat-label>
+                <mat-select [(ngModel)]="otpAction" name="otpAction">
+                  <mat-option value="in">Clock In</mat-option>
+                  <mat-option value="out">Clock Out</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select User</mat-label>
+                <mat-select [(ngModel)]="otpUserId" name="otpUserId" required>
+                  <mat-option *ngFor="let user of users" [value]="user.uid">
+                    {{ user.name }} ({{ user.uid }})
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>person</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Delivery Method</mat-label>
+                <mat-select [(ngModel)]="otpMethod" name="otpMethod">
+                  <mat-option value="email">
+                    <mat-icon>email</mat-icon>
+                    Email
+                    <span *ngIf="getSelectedUser()?.email">
+                      ({{ getSelectedUser()?.email }})
+                    </span>
+                  </mat-option>
+                  <mat-option value="sms">
+                    <mat-icon>phone</mat-icon>
+                    SMS
+                    <span *ngIf="getSelectedUser()?.phone">
+                      ({{ getSelectedUser()?.phone }})
+                    </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button
+                mat-raised-button
+                color="accent"
+                type="button"
+                (click)="onRequestOtp()"
+                [disabled]="otpRequesting || !otpUserId || otpRequested"
+                class="request-button"
+              >
+                <mat-spinner
+                  *ngIf="otpRequesting"
+                  diameter="20"
+                  class="spinner"
+                ></mat-spinner>
+                <span *ngIf="!otpRequesting">
+                  <mat-icon>send</mat-icon>
+                  Request OTP Code
+                </span>
+              </button>
+
+              <div *ngIf="otpRequested" class="otp-section">
+                <div *ngIf="otpCodeDisplayed" class="dev-code">
+                  <p><strong>Dev Mode:</strong> Your code is: {{ otpCodeDisplayed }}</p>
+                </div>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Enter OTP Code</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="otpCode"
+                    name="otpCode"
+                    placeholder="Enter 6-digit code"
+                    maxlength="6"
+                    required
+                  />
+                  <mat-icon matPrefix>lock</mat-icon>
+                </mat-form-field>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="button"
+                  (click)="onVerifyOtp()"
+                  [disabled]="otpVerifying || !otpCode.trim()"
+                  class="submit-button"
+                >
+                  <mat-spinner
+                    *ngIf="otpVerifying"
+                    diameter="20"
+                    class="spinner"
+                  ></mat-spinner>
+                  <span *ngIf="!otpVerifying">
+                    Verify & {{ otpAction === 'in' ? 'Clock In' : 'Clock Out' }}
+                  </span>
+                </button>
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="resetOtpForm()"
+                  class="reset-button"
+                >
+                  Request New Code
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-tab>
+
+        <!-- NFC Card Tab -->
+        <mat-tab label="NFC Card">
+          <div class="tab-content">
+            <div class="nfc-info">
+              <mat-icon class="nfc-icon">contactless</mat-icon>
+              <h3>NFC Card Authentication</h3>
+              <p>
+                Use your NFC card on physical readers at the office entrance.
+              </p>
+              <p class="info-text">
+                Physical readers will automatically detect your card and process
+                clock-in/out.
+              </p>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>
+
