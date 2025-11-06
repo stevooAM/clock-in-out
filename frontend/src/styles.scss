@@ -65,3 +65,36 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #fee2e2;
   color: #991b1b;
 }
+
+// Global Material Select Overlay Fixes
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 10000 !important;
+  pointer-events: none;
+}
+
+.cdk-overlay-pane {
+  pointer-events: auto;
+  z-index: 10000 !important;
+}
+
+.cdk-overlay-connected-position-bounding-box {
+  position: absolute;
+  z-index: 10000 !important;
+}
+
+// Ensure Material select panels are visible
+.mat-mdc-select-panel {
+  position: relative;
+  z-index: 10000 !important;
+  max-height: 256px !important;
+  overflow-y: auto !important;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+// Ensure form fields don't clip dropdowns
+.mat-mdc-form-field {
+  overflow: visible !important;
+}
