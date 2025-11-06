@@ -5,7 +5,7 @@
   "author": "Carlos Caballero",
   "license": "MIT",
 
-'  "scripts": {
+  "scripts": {
     "prebuild": "prisma generate",
     "build": "nest build",
     "postinstall": "prisma generate",
