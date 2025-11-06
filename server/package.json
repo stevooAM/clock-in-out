@@ -4,7 +4,8 @@
   "description": "Modern Clock-in/Out Backend with NestJS 10",
   "author": "Carlos Caballero",
   "license": "MIT",
-  "scripts": {
+
+'  "scripts": {
     "prebuild": "prisma generate",
     "build": "nest build",
     "postinstall": "prisma generate",

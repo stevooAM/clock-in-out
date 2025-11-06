@@ -22,20 +22,41 @@
         font-weight: 500;
       }
     }
+
+    mat-card-content {
+      padding: 1rem !important;
+    }
   }
 
   .tab-content {
     padding: 1.5rem 0;
     min-height: 400px;
+    display: flex;
+    flex-direction: column;
   }
 
   .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+    width: 100%;
 
     .full-width {
       width: 100%;
+      margin-bottom: 0 !important;
+    }
+
+    // Ensure mat-form-field has proper spacing
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 0 !important;
+      display: block;
+
+      // Fix icon positioning
+      mat-icon[matPrefix] {
+        margin-right: 8px;
+        margin-left: 0;
+      }
     }
 
     .submit-button,
@@ -43,10 +64,19 @@
       margin-top: 0.5rem;
       height: 48px;
       font-size: 1rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
 
       .spinner {
         display: inline-block;
-        margin-right: 0.5rem;
+        margin-right: 0;
+      }
+
+      mat-icon {
+        margin-right: 0;
       }
     }
 
@@ -62,6 +92,7 @@
     .reset-button {
       margin-top: 0.5rem;
       color: #666;
+      width: 100%;
     }
   }
 
@@ -69,18 +100,26 @@
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
     .dev-code {
       background-color: #fff3cd;
       border: 1px solid #ffc107;
       border-radius: 4px;
       padding: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0;
 
       p {
         margin: 0;
         color: #856404;
       }
+    }
+
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 0 !important;
     }
   }
 
@@ -126,6 +165,50 @@
     background-color: #f44336 !important;
     color: white !important;
   }
+
+  // Fix Material form field spacing
+  .mat-mdc-form-field {
+    display: block !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+
+    .mat-mdc-text-field-wrapper {
+      padding-bottom: 0 !important;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 0 !important;
+      height: auto !important;
+    }
+
+    .mat-mdc-form-field-hint-wrapper,
+    .mat-mdc-form-field-error-wrapper {
+      padding: 0 !important;
+    }
+  }
+
+  // Ensure proper spacing in tab group
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-body-content {
+      overflow: visible !important;
+    }
+  }
+
+  // Fix mat-select option icons
+  .mat-mdc-select-panel {
+    .mat-mdc-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+        margin-right: 0;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
 }
 
 // Responsive
@@ -136,6 +219,11 @@
     .main-card {
       .tab-content {
         min-height: 300px;
+        padding: 1rem 0;
+      }
+
+      .auth-form {
+        gap: 1rem;
       }
     }
   }

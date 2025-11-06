@@ -79,17 +79,15 @@
                 <mat-label>Delivery Method</mat-label>
                 <mat-select [(ngModel)]="otpMethod" name="otpMethod">
                   <mat-option value="email">
-                    <mat-icon>email</mat-icon>
-                    Email
-                    <span *ngIf="getSelectedUser()?.email">
-                      ({{ getSelectedUser()?.email }})
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                      <mat-icon style="font-size: 18px; width: 18px; height: 18px;">email</mat-icon>
+                      <span>Email<span *ngIf="getSelectedUser()?.email"> ({{ getSelectedUser()?.email }})</span></span>
                     </span>
                   </mat-option>
                   <mat-option value="sms">
-                    <mat-icon>phone</mat-icon>
-                    SMS
-                    <span *ngIf="getSelectedUser()?.phone">
-                      ({{ getSelectedUser()?.phone }})
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                      <mat-icon style="font-size: 18px; width: 18px; height: 18px;">phone</mat-icon>
+                      <span>SMS<span *ngIf="getSelectedUser()?.phone"> ({{ getSelectedUser()?.phone }})</span></span>
                     </span>
                   </mat-option>
                 </mat-select>
